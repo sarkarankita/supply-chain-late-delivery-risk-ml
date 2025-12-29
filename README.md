@@ -168,24 +168,24 @@ python app/predict.py \
   --input data/02-preprocessed/X_preprocessed.csv \
   --output data/04-predictions/inference_predictions.csv
   
-   => This design allows easy integration with APIs, dashboards, or BI tools.
+## Project Structure
 
 DATACO_LATE_DELIVERY_ML/
 │
 ├── app/
-│   └── predict.py                 # Inference script (production entrypoint)
+│   └── predict.py                     # Inference script (production entrypoint)
 │
 ├── data/
-│   ├── 01-raw/                    # Raw, immutable datasets
+│   ├── 01-raw/                        # Raw, immutable datasets
 │   │   ├── DataCoSupplyChainDataset.csv
 │   │   ├── DescriptionDataCoSupplyChain.csv
 │   │   └── tokenized_access_logs.csv
 │   │
-│   ├── 02-preprocessed/           # Cleaned & leakage-free data
+│   ├── 02-preprocessed/               # Cleaned & leakage-free data
 │   │   ├── X_preprocessed.csv
 │   │   └── y_preprocessed.csv
 │   │
-│   └── 04-predictions/            # Model outputs & evaluation artifacts
+│   └── 04-predictions/                # Model outputs & evaluation artifacts
 │       ├── inference_predictions.csv
 │       ├── cm_logistic.png
 │       ├── cm_random_forest.png
@@ -194,7 +194,7 @@ DATACO_LATE_DELIVERY_ML/
 │       └── xgb_feature_importance.png
 │
 ├── notebooks/
-│   └── EDA.ipynb                  # Exploratory Data Analysis
+│   └── EDA.ipynb                      # Exploratory Data Analysis
 │
 ├── requirements/
 │   ├── base.txt
@@ -202,12 +202,12 @@ DATACO_LATE_DELIVERY_ML/
 │   └── prod.txt
 │
 ├── src/
-│   ├── pipelines/
+│   ├── pipelines/                     # Data & feature pipelines
 │   │   ├── preprocess_pipeline.py
 │   │   ├── encoding_pipeline.py
 │   │   └── data_loader.py
 │   │
-│   ├── models/
+│   ├── models/                        # Trained models & encoders
 │   │   ├── encoder.pkl
 │   │   ├── logistic_model.pkl
 │   │   ├── xgboost_model.pkl
@@ -216,9 +216,11 @@ DATACO_LATE_DELIVERY_ML/
 │   └── tests/
 │       └── test_preprocess.py
 │
-├── run_training.py                # Training + evaluation orchestration
+├── run_training.py                    # Training & evaluation orchestration
 ├── .gitignore
 └── README.md
+
+
 
 ## Conclusion
 This project demonstrates an end-to-end machine learning system focused on realistic constraints, data correctness, and production usability.  
