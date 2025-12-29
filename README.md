@@ -1,141 +1,230 @@
-# 📦 Late Delivery Risk Prediction – Supply Chain Machine Learning
+# 🚚 Supply Chain Late Delivery Risk Prediction (Machine Learning)
 
-## 🔗 Table of Contents
-- [Project Overview](#-project-overview)
-- [Business Problem](#-business-problem)
-- [Dataset Description](#-dataset-description)
-- [Tech Stack](#-tech-stack)
-- [Key Challenges Addressed](#-key-challenges-addressed)
-- [Exploratory Data Analysis (EDA)](#-exploratory-data-analysis-eda)
-- [Modeling Approach](#-modeling-approach)
-- [Model Evaluation & Results](#-model-evaluation--results)
-- [Explainability & Feature Importance](#-explainability--feature-importance)
-- [Production Readiness & Inference](#-production-readiness--inference)
-- [Project Structure](#-project-structure)
-- [Deployment Considerations](#-deployment-considerations)
-- [Conclusion](#-conclusion)
-- [Author](#-author)
-
----
-
-## 📌 Project Overview
-Late deliveries are a major operational challenge in supply-chain management, impacting customer satisfaction, logistics cost, and service reliability.
-
-This project implements an **end-to-end machine learning pipeline** to predict **late delivery risk at the time of order placement**, enabling proactive intervention before fulfillment begins.
-
-The solution is designed with **production-level best practices**, including leakage prevention, class imbalance handling, robust validation, explainability, and batch inference.
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Business Problem](#business-problem)
+- [Dataset Description](#dataset-description)
+- [Tech Stack](#tech-stack)
+- [Key Challenges Addressed](#key-challenges-addressed)
+- [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)
+- [Data Preprocessing & Feature Engineering](#data-preprocessing--feature-engineering)
+- [Encoding Strategy](#encoding-strategy)
+- [Models & Evaluation](#models--evaluation)
+- [Overfitting & Validation](#overfitting--validation)
+- [Production Readiness & Inference](#production-readiness--inference)
+- [Project Structure](#project-structure)
+- [Deployment Considerations](#deployment-considerations)
+- [Conclusion](#conclusion)
+- [Author](#author)
 
 ---
 
-## 🎯 Business Problem
+## Project Overview
+Late deliveries are a recurring operational challenge in large-scale supply chain systems. They negatively impact customer satisfaction, increase logistics costs, and create downstream service-level agreement (SLA) risks.
+
+This project implements a **production-oriented machine learning pipeline** to predict whether an order is likely to be delivered late **before fulfillment begins**.  
+The emphasis is on **data integrity, leakage prevention, robust validation, and inference readiness**, rather than purely optimizing accuracy.
+
+---
+
+## Business Problem
 **Objective:**  
-Predict whether an order is likely to be delivered late **before shipment execution**.
+Predict the probability that an order will be delivered late using only information available at order creation time.
 
-This is an **order-level, short-term operational decision problem**, best addressed using **binary classification**, not time-series forecasting.
+**Why this matters:**
+- Enables early identification of high-risk orders
+- Supports proactive shipment prioritization
+- Improves logistics planning and operational efficiency
+- Reduces downstream escalations and penalties
 
-### Business Impact
-- Early identification of high-risk orders  
-- Improved shipment prioritization  
-- Reduced operational bottlenecks  
-- Better customer experience  
+This is an **order-level operational decision problem**, modeled as a **binary classification task**.
 
 ---
 
-## 🗂️ Dataset Description
-- **Source:** DataCo Smart Supply Chain Dataset (Kaggle)
-- **Records:** ~180,000 order-level transactions
+## Dataset Description
+- **Source:** DataCo Smart Supply Chain Dataset
+- **Volume:** ~180,000 order records
 - **Target Variable:** `Late_delivery_risk`
   - `0` → On-time delivery
   - `1` → Late delivery
+- **Feature Categories:**
+  - Customer & geography
+  - Order & product attributes
+  - Market & logistics information
 
-Additional access-log data was provided but intentionally excluded, as it is more suitable for **demand forecasting**, which addresses a different decision horizon.
-
----
-
-## 🛠 Tech Stack
-
-### Programming & Analysis
-- Python 3
-- Pandas, NumPy
-- Matplotlib, Seaborn
-
-### Machine Learning
-- scikit-learn
-- XGBoost
-- category-encoders
-
-### Modeling & Evaluation
-- Logistic Regression
-- Random Forest
-- XGBoost
-- ROC-AUC, Precision, Recall, F1-score
-- Stratified Train/Test Split
-- Cross-Validation
-
-### Engineering & Production
-- Modular preprocessing & encoding pipelines
-- joblib for model persistence
-- Batch inference via CLI
+Additional metadata and access log files are included for completeness and future extensibility.
 
 ---
 
-## ⚠️ Key Challenges Addressed
-- Class imbalance between late and on-time deliveries
-- Data leakage from post-delivery features
-- High-cardinality categorical variables
-- Production-safe inference without retraining
+## Tech Stack
+- **Programming Language:** Python
+- **Data Analysis:** Pandas, NumPy
+- **Visualization:** Matplotlib, Seaborn
+- **Machine Learning:** Scikit-learn, XGBoost
+- **Encoding:** Category Encoders
+- **Model Persistence:** Joblib
+- **Environment Management:** Virtualenv
+- **Version Control:** Git, GitHub
 
 ---
 
-## 🔍 Exploratory Data Analysis (EDA)
-EDA was conducted with a **business-first approach**, focusing on:
-- Target imbalance analysis
-- Data quality and sanity checks
-- Leakage identification
-- Key numerical and categorical drivers
-- Temporal patterns (weekday vs weekend behavior)
+## Key Challenges Addressed
+This project explicitly handles real-world machine learning challenges:
 
-EDA findings were validated against **model feature importance** for consistency.
+- **Data Leakage Prevention**  
+  All post-delivery and post-shipment features were removed to ensure realistic predictions.
 
----
+- **Class Imbalance**  
+  Late deliveries are not evenly distributed. Class weighting and probability threshold tuning were applied.
 
-## 🤖 Modeling Approach
-Three models were trained and evaluated:
+- **High Cardinality Categorical Features**  
+  Many categorical fields (e.g., city, product, region) required scalable encoding strategies.
 
-| Model | Purpose |
-|-----|--------|
-| Logistic Regression | Interpretable baseline |
-| Random Forest | Non-linear benchmark |
-| XGBoost | Final production model |
-
-- **Primary metric:** ROC-AUC (robust to class imbalance)
-- **Threshold tuning** applied to improve recall for late deliveries
+- **Overfitting Control**  
+  Cross-validation, regularization, and model complexity constraints were used to ensure generalization.
 
 ---
 
-## 📊 Model Evaluation & Results
-- Confusion matrices were generated to analyze false positives and false negatives.
-- ROC curve comparison shows consistent improvement from baseline models to XGBoost.
-- XGBoost achieved the best balance between performance and generalization.
+## Exploratory Data Analysis (EDA)
+EDA was conducted to:
+- Understand the distribution of late vs on-time deliveries
+- Identify key features correlated with delivery delays
+- Analyze missing data patterns and data quality issues
+
+EDA insights directly influenced:
+- Feature selection
+- Encoding strategy
+- Model choice
+
+📓 Notebook: `notebooks/EDA.ipynb`
 
 ---
 
-## 🧠 Explainability & Feature Importance
-XGBoost feature importance highlights key drivers of late delivery risk, including:
-- Customer and order location attributes
-- Shipping and transaction types
-- Product and category identifiers
-- Missing-value indicators
+## Data Preprocessing & Feature Engineering
+Preprocessing was designed to be **training-safe and inference-consistent**:
 
-These insights align strongly with EDA findings, improving model trustworthiness.
+- Removal of leakage-prone columns
+- Date-based feature extraction (day of week, month, weekend flag)
+- Missing value handling:
+  - Numerical features → median imputation
+  - Categorical features → `"Unknown"`
+- Missing-value indicator flags added where applicable
+
+Processed datasets are stored separately to maintain pipeline clarity.
 
 ---
 
-## 🚀 Production Readiness & Inference
-The pipeline supports **batch inference without retraining**.
+## Encoding Strategy
+A hybrid encoding approach was used:
 
-### Batch Inference Example
-```bash
+- **Low-cardinality categorical features:** One-Hot Encoding  
+- **High-cardinality categorical features:** Target Encoding  
+- **Numerical features:** Standard Scaling  
+
+Encoding is fitted **only on training data** to prevent target leakage.
+
+---
+
+## Models & Evaluation
+The following models were trained and evaluated:
+
+| Model | Test ROC-AUC |
+|------|-------------|
+| Logistic Regression | ~0.80 |
+| Random Forest | ~0.84 |
+| XGBoost | ~0.82 |
+
+**Primary metric:** ROC-AUC  
+Additional evaluation includes:
+- Precision, Recall, F1-score
+- Confusion matrices
+- ROC curve comparison
+
+Logistic Regression provides interpretability, while XGBoost captures complex non-linear patterns.
+
+---
+
+## Overfitting & Validation
+Model robustness was evaluated using:
+- Stratified train-test split
+- 5-fold cross-validation
+- Regularization and depth constraints
+- Threshold tuning for imbalanced data
+
+**Observation:**  
+Random Forest showed mild overfitting, while Logistic Regression and XGBoost demonstrated more stable generalization.
+
+---
+
+## Production Readiness & Inference
+The project includes a standalone inference pipeline:
+
+- Trained models and encoders are serialized (`.pkl`)
+- Batch predictions supported via command line
+- Outputs saved as CSV for downstream systems
+
+**Example:**
 python app/predict.py \
   --input data/02-preprocessed/X_preprocessed.csv \
   --output data/04-predictions/inference_predictions.csv
+  
+   => This design allows easy integration with APIs, dashboards, or BI tools.
+
+DATACO_LATE_DELIVERY_ML/
+│
+├── app/
+│   └── predict.py                 # Inference script (production entrypoint)
+│
+├── data/
+│   ├── 01-raw/                    # Raw, immutable datasets
+│   │   ├── DataCoSupplyChainDataset.csv
+│   │   ├── DescriptionDataCoSupplyChain.csv
+│   │   └── tokenized_access_logs.csv
+│   │
+│   ├── 02-preprocessed/           # Cleaned & leakage-free data
+│   │   ├── X_preprocessed.csv
+│   │   └── y_preprocessed.csv
+│   │
+│   └── 04-predictions/            # Model outputs & evaluation artifacts
+│       ├── inference_predictions.csv
+│       ├── cm_logistic.png
+│       ├── cm_random_forest.png
+│       ├── cm_xgboost.png
+│       ├── roc_curves.png
+│       └── xgb_feature_importance.png
+│
+├── notebooks/
+│   └── EDA.ipynb                  # Exploratory Data Analysis
+│
+├── requirements/
+│   ├── base.txt
+│   ├── dev.txt
+│   └── prod.txt
+│
+├── src/
+│   ├── pipelines/
+│   │   ├── preprocess_pipeline.py
+│   │   ├── encoding_pipeline.py
+│   │   └── data_loader.py
+│   │
+│   ├── models/
+│   │   ├── encoder.pkl
+│   │   ├── logistic_model.pkl
+│   │   ├── xgboost_model.pkl
+│   │   └── save_models.py
+│   │
+│   └── tests/
+│       └── test_preprocess.py
+│
+├── run_training.py                # Training + evaluation orchestration
+├── .gitignore
+└── README.md
+
+## Conclusion
+This project demonstrates an end-to-end machine learning system focused on realistic constraints, data correctness, and production usability.  
+The solution is designed to align closely with enterprise-level supply chain analytics use cases, emphasizing robust modeling, leakage prevention, and deployable inference workflows rather than experimental results alone.
+
+## Author
+**Ankita Sarkar**  
+Data & Machine Learning Engineer
+
