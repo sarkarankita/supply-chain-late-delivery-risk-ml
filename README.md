@@ -170,57 +170,7 @@ python app/predict.py \
   
 ## Project Structure
 
-DATACO_LATE_DELIVERY_ML/
-│
-├── app/
-│   └── predict.py                     # Inference script (production entrypoint)
-│
-├── data/
-│   ├── 01-raw/                        # Raw, immutable datasets
-│   │   ├── DataCoSupplyChainDataset.csv
-│   │   ├── DescriptionDataCoSupplyChain.csv
-│   │   └── tokenized_access_logs.csv
-│   │
-│   ├── 02-preprocessed/               # Cleaned & leakage-free data
-│   │   ├── X_preprocessed.csv
-│   │   └── y_preprocessed.csv
-│   │
-│   └── 04-predictions/                # Model outputs & evaluation artifacts
-│       ├── inference_predictions.csv
-│       ├── cm_logistic.png
-│       ├── cm_random_forest.png
-│       ├── cm_xgboost.png
-│       ├── roc_curves.png
-│       └── xgb_feature_importance.png
-│
-├── notebooks/
-│   └── EDA.ipynb                      # Exploratory Data Analysis
-│
-├── requirements/
-│   ├── base.txt
-│   ├── dev.txt
-│   └── prod.txt
-│
-├── src/
-│   ├── pipelines/                     # Data & feature pipelines
-│   │   ├── preprocess_pipeline.py
-│   │   ├── encoding_pipeline.py
-│   │   └── data_loader.py
-│   │
-│   ├── models/                        # Trained models & encoders
-│   │   ├── encoder.pkl
-│   │   ├── logistic_model.pkl
-│   │   ├── xgboost_model.pkl
-│   │   └── save_models.py
-│   │
-│   └── tests/
-│       └── test_preprocess.py
-│
-├── run_training.py                    # Training & evaluation orchestration
-├── .gitignore
-└── README.md
-
-
+<img width="839" height="1405" alt="image" src="https://github.com/user-attachments/assets/131af617-97a0-4ca1-a9b7-41336df7c75b" />
 
 ## Conclusion
 This project demonstrates an end-to-end machine learning system focused on realistic constraints, data correctness, and production usability.  
